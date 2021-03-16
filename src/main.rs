@@ -71,7 +71,7 @@ fn rebuild(kind: &str, flake_root: &str, extra_args: &[&str]) -> Result<(), eyre
         .args(extra_args)
         .status()
         .context("Could not find doas")?;
-    if code.success() {
+    if kind == "switch" && code.success() {
         std::fs::remove_file("result").context("Could not remove result link")?;
     }
     std::process::exit(code.code().unwrap_or(1));
