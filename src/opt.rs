@@ -30,4 +30,6 @@ pub(crate) enum Subcmd {
     Repl,
     /// Rollback system configuration
     Rollback,
+    /// Check flake
+    Check,
 }

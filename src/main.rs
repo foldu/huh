@@ -52,12 +52,10 @@ fn main() -> Result<(), eyre::Error> {
             tmp.flush().context(msg)?;
 
             let path = tmp.path().to_str().expect("Temporary file not utf-8");
-            exec(
-                Command::new("nix")
-                    .args(["repl", "<nixpkgs>"].iter())
-                    .arg(path),
-            )
+            exec(Command::new("nix").args(&["repl", "<nixpkgs>"]).arg(path))
         }
+
+        Check => exec(Command::new("nix").args(&["flake", "check"])),
     }
 }
 
@@ -68,7 +66,7 @@ fn exec(cmd: &mut Command) -> Result<(), eyre::Error> {
 
 fn rebuild(kind: &str, flake_root: &str, extra_args: &[&str]) -> Result<(), eyre::Error> {
     let code = privileged()?
-        .args(["nixos-rebuild", kind, "--flake", flake_root].iter())
+        .args(&["nixos-rebuild", kind, "--flake", flake_root])
         .args(extra_args)
         .status()
         .expect("Privilege escalation utility vanished");
