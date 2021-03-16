@@ -38,7 +38,7 @@ fn main() -> Result<(), eyre::Error> {
             )
         }
 
-        Test => rebuild("test", &flake_root, &[]),
+        Test => rebuild("test", &flake_root, &["--fast"]),
 
         Switch => rebuild("switch", &flake_root, &[]),
 
