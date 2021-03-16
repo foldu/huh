@@ -67,15 +67,32 @@ fn exec(cmd: &mut Command) -> Result<(), eyre::Error> {
 }
 
 fn rebuild(kind: &str, flake_root: &str, extra_args: &[&str]) -> Result<(), eyre::Error> {
-    let code = Command::new("doas")
+    let code = privileged()?
         .args(["nixos-rebuild", kind, "--flake", flake_root].iter())
         .args(extra_args)
         .status()
-        .context("Could not find doas")?;
+        .expect("Privilege escalation utility vanished");
     if kind == "switch" && code.success() {
         std::fs::remove_file("result").context("Could not remove result link")?;
     }
     std::process::exit(code.code().unwrap_or(1));
+}
+
+fn privileged() -> Result<Command, eyre::Error> {
+    match ["doas", "sudo"]
+        .iter()
+        .find_map(|cmd| which::which(cmd).ok())
+    {
+        Some(path) => Ok(Command::new(path)),
+        None => {
+            let su = which::which("su")
+                .context("Could not find any privilege escalation utilities (doas|sudo|su)")?;
+            // TODO: check out if this even works
+            let mut cmd = Command::new(su);
+            cmd.arg("-c");
+            Ok(cmd)
+        }
+    }
 }
 
 fn find_flake_root() -> Result<String, eyre::Error> {
