@@ -62,6 +62,7 @@ fn main() -> Result<(), eyre::Error> {
 }
 
 fn exec(cmd: &mut Command) -> Result<(), eyre::Error> {
+    // FIXME: put command name into context when `command_access` is stable
     Err(cmd.exec()).context("Could not find command")
 }
 
