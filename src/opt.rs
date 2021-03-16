@@ -1,7 +1,9 @@
 use clap::Clap;
 
 #[derive(Clap)]
-#[clap(name = "hey", bin_name = "hey")]
+// FIXME: bin_name needs to be set because clap_generate ignores
+// the argument given in generate_to https://github.com/clap-rs/clap/issues/1898
+#[clap(name = "huh", bin_name = "huh")]
 pub(crate) struct Opt {
     /// Path to flake, will default to finding it starting from the current
     /// working directory walking up
