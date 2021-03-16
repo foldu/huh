@@ -1,5 +1,5 @@
 {
-  description = "The similar thing to the hlissner/dotfiles/bin/hey wrapper script";
+  description = "The similar thing to the hlissner/dotfiles/bin/huh wrapper script";
 
   inputs = {
     flake-utils.url = "github:numtide/flake-utils";
@@ -8,7 +8,7 @@
 
   outputs = { self, nixpkgs, naersk, flake-utils }@inputs: {
     overlay = final: prev: {
-      hey =
+      huh =
         let
           pkgs = nixpkgs.legacyPackages.${prev.system};
           naersk-lib = naersk.lib."${prev.system}".override {
@@ -23,8 +23,8 @@
             pkgs.installShellFiles
           ];
           postInstall = ''
-            installShellCompletion target/release/build/hey-*/out/hey.{fish,bash}
-            installShellCompletion --zsh target/release/build/hey-*/out/_hey
+            installShellCompletion target/release/build/huh-*/out/huh.{fish,bash}
+            installShellCompletion --zsh target/release/build/huh-*/out/_huh
           '';
         };
 
@@ -37,7 +37,7 @@
       };
     in
     {
-      defaultPackage = pkgs.hey;
+      defaultPackage = pkgs.huh;
     }
   );
 }
