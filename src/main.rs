@@ -44,6 +44,15 @@ fn main() -> Result<(), eyre::Error> {
 
         Rollback => rebuild("switch", &flake_root, &["--rollback"]),
 
+        Gc { period } => {
+            let mut cmd = Command::new("nix-collect-garbage");
+            exec(if period == "all" {
+                cmd.arg("-d")
+            } else {
+                cmd.args(&["--delete-older-than", period.as_str()])
+            })
+        }
+
         Repl => {
             let mut tmp =
                 tempfile::NamedTempFile::new().context("Couldn't create temporary file")?;

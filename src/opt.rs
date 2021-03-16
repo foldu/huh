@@ -32,4 +32,10 @@ pub(crate) enum Subcmd {
     Rollback,
     /// Check flake
     Check,
+    /// Garbage collect nix store
+    Gc {
+        /// Garbage collect everything older than this. Examples are `all` and
+        /// `7d` (7days)
+        period: String,
+    },
 }
