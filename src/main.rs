@@ -2,7 +2,7 @@ mod opt;
 
 use clap::Clap;
 use eyre::Context;
-use std::{io::Write, os::unix::process::CommandExt, process::Command};
+use std::{io::Write, os::unix::process::CommandExt, path::Path, process::Command};
 
 fn main() -> Result<(), eyre::Error> {
     let opt = opt::Opt::parse();
@@ -72,10 +72,33 @@ fn rebuild(kind: &str, flake_root: &str, extra_args: &[&str]) -> Result<(), eyre
         .args(extra_args)
         .status()
         .expect("Privilege escalation utility vanished");
-    if kind == "switch" && code.success() {
-        std::fs::remove_file("result").context("Could not remove result link")?;
+    if code.success() {
+        // FIXME: sometimes it creates a result file sometimes it doesn't
+        // I don't get it
+        // only remove if symlink as to not accidentally nuke something important
+        remove_if_exists_and_symlink("result")?;
     }
     std::process::exit(code.code().unwrap_or(1));
+}
+
+// FIXME: bad function name
+fn remove_if_exists_and_symlink(path: impl AsRef<Path>) -> Result<(), eyre::Error> {
+    let path = path.as_ref();
+    let meta = match std::fs::metadata(path) {
+        Ok(meta) => meta,
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Ok(()),
+        Err(e) => return Err(e).with_context(|| format!("Could not stat {}", path.display())),
+    };
+
+    if meta.file_type().is_symlink() {
+        match std::fs::remove_file(path) {
+            Ok(()) => Ok(()),
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(()),
+            Err(e) => Err(e).with_context(|| format!("Could not remove {}", path.display())),
+        }
+    } else {
+        Ok(())
+    }
 }
 
 fn privileged() -> Result<Command, eyre::Error> {
