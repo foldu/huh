@@ -73,12 +73,16 @@ fn exec(cmd: &mut Command) -> Result<(), eyre::Error> {
     Err(cmd.exec()).context("Could not find command")
 }
 
-fn rebuild(kind: &str, flake_root: &str, extra_args: &[&str]) -> Result<(), eyre::Error> {
-    exec(
-        Command::new("doas")
-            .args(["nixos-rebuild", kind, "--flake", flake_root].iter())
-            .args(extra_args),
-    )
+fn rebuild(kind: &str, flake_root: &str, extra_args: &[&str]) -> Result<!, eyre::Error> {
+    let code = Command::new("doas")
+        .args(["nixos-rebuild", kind, "--flake", flake_root].iter())
+        .args(extra_args)
+        .status()
+        .context("Could not find doas")?;
+    if code.success() {
+        std::fs::remove_file("result").context("Could not remove result link")?;
+    }
+    std::process::exit(code.code().unwrap_or(1));
 }
 
 fn find_flake_root() -> Result<String, eyre::Error> {
