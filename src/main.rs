@@ -73,7 +73,7 @@ fn exec(cmd: &mut Command) -> Result<(), eyre::Error> {
     Err(cmd.exec()).context("Could not find command")
 }
 
-fn rebuild(kind: &str, flake_root: &str, extra_args: &[&str]) -> Result<!, eyre::Error> {
+fn rebuild(kind: &str, flake_root: &str, extra_args: &[&str]) -> Result<(), eyre::Error> {
     let code = Command::new("doas")
         .args(["nixos-rebuild", kind, "--flake", flake_root].iter())
         .args(extra_args)
