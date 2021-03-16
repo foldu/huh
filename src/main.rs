@@ -16,10 +16,6 @@ fn main() -> Result<(), eyre::Error> {
         Update { no_lock, inputs } => {
             let mut args = Vec::with_capacity(1 + inputs.len() * 2 + usize::from(!no_lock));
 
-            if !no_lock {
-                args.push("--commit-lock-file");
-            }
-
             if inputs.is_empty() {
                 args.push("update");
             } else {
@@ -29,6 +25,10 @@ fn main() -> Result<(), eyre::Error> {
                     args.push(input);
                 }
             };
+
+            if !no_lock {
+                args.push("--commit-lock-file");
+            }
 
             exec(
                 Command::new("nix")
