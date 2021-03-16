@@ -35,20 +35,14 @@ fn main() -> Result<(), eyre::Error> {
                     .arg("flake")
                     .current_dir(&flake_root)
                     .args(&args),
-            )?;
+            )
         }
 
-        Test => {
-            rebuild("test", &flake_root, &[])?;
-        }
+        Test => rebuild("test", &flake_root, &[]),
 
-        Switch => {
-            rebuild("switch", &flake_root, &[])?;
-        }
+        Switch => rebuild("switch", &flake_root, &[]),
 
-        Rollback => {
-            rebuild("switch", &flake_root, &["--rollback"])?;
-        }
+        Rollback => rebuild("switch", &flake_root, &["--rollback"]),
 
         Repl => {
             let mut tmp =
@@ -62,11 +56,9 @@ fn main() -> Result<(), eyre::Error> {
                 Command::new("nix")
                     .args(["repl", "<nixpkgs>"].iter())
                     .arg(path),
-            )?;
+            )
         }
     }
-
-    Ok(())
 }
 
 fn exec(cmd: &mut Command) -> Result<(), eyre::Error> {
