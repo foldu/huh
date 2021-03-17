@@ -66,9 +66,17 @@ fn main() -> Result<(), eyre::Error> {
             exec(Command::new("nix").args(&["repl", "<nixpkgs>"]).arg(path))
         }
 
-        Check => exec(Command::new("nix").args(&["flake", "check"])),
+        Check => exec(
+            Command::new("nix")
+                .current_dir(&flake_root)
+                .args(&["flake", "check"]),
+        ),
 
-        Show => exec(Command::new("nix").args(&["flake", "show"])),
+        Show => exec(
+            Command::new("nix")
+                .current_dir(&flake_root)
+                .args(&["flake", "show"]),
+        ),
     }
 }
 
