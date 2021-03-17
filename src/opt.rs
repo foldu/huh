@@ -38,4 +38,6 @@ pub(crate) enum Subcmd {
         /// `7d` (7days)
         period: String,
     },
+    /// Show exports of current flake
+    Show,
 }

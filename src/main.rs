@@ -67,6 +67,8 @@ fn main() -> Result<(), eyre::Error> {
         }
 
         Check => exec(Command::new("nix").args(&["flake", "check"])),
+
+        Show => exec(Command::new("nix").args(&["flake", "show"])),
     }
 }
 
