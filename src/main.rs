@@ -93,9 +93,12 @@ fn rebuild(kind: &str, flake_root: &str, extra_args: &[&str]) -> Result<(), eyre
         .expect("Privilege escalation utility vanished");
     if code.success() {
         // FIXME: sometimes it creates a result file sometimes it doesn't
+        // sometimes it gets created in the current working directory sometimes
+        // in the flake root
         // I don't get it
         // only remove if symlink as to not accidentally nuke something important
         remove_if_exists_and_symlink("result")?;
+        remove_if_exists_and_symlink(Path::new(flake_root).join("result"))?;
     }
     std::process::exit(code.code().unwrap_or(1));
 }
