@@ -40,4 +40,10 @@ pub(crate) enum Subcmd {
     },
     /// Show exports of current flake
     Show,
+
+    /// Show flake inputs
+    Inputs,
+
+    /// Prefetch (see man 7 nix3-flake-prefetch)
+    Prefetch { thing: String },
 }

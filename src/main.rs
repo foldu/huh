@@ -30,12 +30,7 @@ fn main() -> Result<(), eyre::Error> {
                 args.push("--commit-lock-file");
             }
 
-            exec(
-                Command::new("nix")
-                    .arg("flake")
-                    .current_dir(&flake_root)
-                    .args(&args),
-            )
+            exec_nix_flake(&flake_root, &args)
         }
 
         Test => rebuild("test", &flake_root, &["--fast"]),
@@ -66,18 +61,23 @@ fn main() -> Result<(), eyre::Error> {
             exec(Command::new("nix").args(&["repl", "<nixpkgs>"]).arg(path))
         }
 
-        Check => exec(
-            Command::new("nix")
-                .current_dir(&flake_root)
-                .args(&["flake", "check"]),
-        ),
+        Check => exec_nix_flake(&flake_root, &["check"]),
 
-        Show => exec(
-            Command::new("nix")
-                .current_dir(&flake_root)
-                .args(&["flake", "show"]),
-        ),
+        Inputs => exec_nix_flake(&flake_root, &["list-inputs"]),
+
+        Prefetch { thing } => exec_nix_flake(&flake_root, &["prefetch", &thing]),
+
+        Show => exec_nix_flake(&flake_root, &["show"]),
     }
+}
+
+fn exec_nix_flake(flake_root: &str, args: &[&str]) -> Result<(), eyre::Error> {
+    exec(
+        Command::new("nix")
+            .current_dir(flake_root)
+            .arg("flake")
+            .args(args),
+    )
 }
 
 fn exec(cmd: &mut Command) -> Result<(), eyre::Error> {
