@@ -7,38 +7,34 @@
     naersk.url = "github:nmattia/naersk";
   };
 
-  outputs = { self, nixpkgs, naersk, flake-utils }@inputs: {
-    overlay = final: prev: {
-      huh =
-        let
-          pkgs = nixpkgs.legacyPackages.${prev.system};
-          naersk-lib = naersk.lib."${prev.system}".override {
-            cargo = pkgs.cargo;
-            rustc = pkgs.rustc;
+  outputs = { self, nixpkgs, naersk, flake-utils }@inputs:
+    flake-utils.lib.eachDefaultSystem (system:
+      let
+        pkgs = nixpkgs.legacyPackages.${system};
+        huh =
+          let
+            naersk-lib = naersk.lib."${system}".override {
+              cargo = pkgs.cargo;
+              rustc = pkgs.rustc;
+            };
+          in
+          naersk-lib.buildPackage {
+            src = ./.;
+            singleStep = true;
+            nativeBuildInputs = [
+              pkgs.installShellFiles
+            ];
+            postInstall = ''
+              installShellCompletion target/release/build/huh-*/out/huh.{fish,bash}
+              installShellCompletion --zsh target/release/build/huh-*/out/_huh
+            '';
           };
-        in
-        naersk-lib.buildPackage {
-          src = ./.;
-          singleStep = true;
-          nativeBuildInputs = [
-            pkgs.installShellFiles
-          ];
-          postInstall = ''
-            installShellCompletion target/release/build/huh-*/out/huh.{fish,bash}
-            installShellCompletion --zsh target/release/build/huh-*/out/_huh
-          '';
+      in
+      {
+        defaultPackage = huh;
+        packages = {
+          inherit huh;
         };
-
-    };
-  } // flake-utils.lib.eachDefaultSystem (system:
-    let
-      pkgs = import nixpkgs {
-        overlays = [ self.overlay ];
-        inherit system;
-      };
-    in
-    {
-      defaultPackage = pkgs.huh;
-    }
-  );
+      }
+    );
 }
