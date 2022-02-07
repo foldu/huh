@@ -2,6 +2,7 @@
   description = "The similar thing to the hlissner/dotfiles/bin/huh wrapper script";
 
   inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     naersk.url = "github:nmattia/naersk";
   };
