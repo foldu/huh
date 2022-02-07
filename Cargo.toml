@@ -8,14 +8,14 @@ license = "Unlicense OR MIT"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-clap = "3.0.0-beta.2"
-eyre = "0.6.5"
-tempfile = "3.2.0"
-which = "4.0.2"
+clap = { version = "3.0.14", features = ["derive"] }
+eyre = "0.6.6"
+tempfile = "3.3.0"
+which = "4.2.4"
 
 [build-dependencies]
-clap = "3.0.0-beta.2"
-clap_generate = "3.0.0-beta.2"
+clap = { version = "3.0.14", features = ["derive"] }
+clap_complete = "3.0.6"
 
 [profile.release]
 lto = "fat"

@@ -1,6 +1,6 @@
 mod opt;
 
-use clap::Clap;
+use clap::Parser;
 use eyre::Context;
 use std::{io::Write, os::unix::process::CommandExt, path::Path, process::Command};
 

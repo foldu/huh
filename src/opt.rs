@@ -1,6 +1,6 @@
-use clap::Clap;
+use clap::Parser;
 
-#[derive(Clap)]
+#[derive(Parser)]
 // FIXME: bin_name needs to be set because clap_generate ignores
 // the argument given in generate_to https://github.com/clap-rs/clap/issues/1898
 #[clap(name = "huh", bin_name = "huh")]
@@ -12,7 +12,7 @@ pub(crate) struct Opt {
     pub subcmd: Subcmd,
 }
 
-#[derive(Clap)]
+#[derive(Parser)]
 pub(crate) enum Subcmd {
     /// Update flake inputs
     Update {
