@@ -86,8 +86,9 @@ fn exec(cmd: &mut Command) -> Result<(), eyre::Error> {
 }
 
 fn rebuild(kind: &str, flake_root: &str, extra_args: &[&str]) -> Result<(), eyre::Error> {
-    let code = privileged()?
-        .args(&["nixos-rebuild", kind, "--flake", flake_root])
+    // FIXME: probably doesn't work with doas
+    let code = Command::new("nixos-rebuild")
+        .args(&[kind, "--flake", flake_root, "--use-remote-sudo"])
         .args(extra_args)
         .status()
         .expect("Privilege escalation utility vanished");
