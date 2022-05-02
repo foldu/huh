@@ -6,7 +6,7 @@ include!("src/opt.rs");
 const BIN: &str = env!("CARGO_PKG_NAME");
 
 fn main() {
-    let mut opt = Opt::into_app();
+    let mut opt = Opt::command();
 
     let outdir = match std::env::var_os("OUT_DIR") {
         None => return,
