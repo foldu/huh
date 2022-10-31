@@ -11,6 +11,12 @@ fn main() -> Result<(), eyre::Error> {
         .flake
         .map_or_else(find_flake_root, |path| Ok(path.to_owned()))?;
 
+    let mut rebuild_args = if opt.no_substitute {
+        vec!["--option", "substitute", "false"]
+    } else {
+        Vec::with_capacity(1)
+    };
+
     use opt::Subcmd::*;
     match opt.subcmd {
         Update { no_lock, inputs } => {
@@ -33,11 +39,17 @@ fn main() -> Result<(), eyre::Error> {
             exec_nix_flake(&flake_root, &args)
         }
 
-        Test => rebuild("test", &flake_root, &["--fast"]),
+        Test => {
+            rebuild_args.push("--fast");
+            rebuild("test", &flake_root, &rebuild_args)
+        }
 
-        Switch => rebuild("switch", &flake_root, &[]),
+        Switch => rebuild("switch", &flake_root, &rebuild_args),
 
-        Rollback => rebuild("switch", &flake_root, &["--rollback"]),
+        Rollback => {
+            rebuild_args.push("rollback");
+            rebuild("switch", &flake_root, &rebuild_args)
+        }
 
         Gc { period } => {
             let mut cmd = privileged()?;

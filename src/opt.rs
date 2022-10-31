@@ -7,7 +7,11 @@ use clap::Parser;
 pub(crate) struct Opt {
     /// Path to flake, will default to finding it starting from the current
     /// working directory walking up
+    #[clap(short, long)]
     pub flake: Option<String>,
+    /// Turn off substituters in case binary cache is down
+    #[clap(short = 'n', long)]
+    pub no_substitute: bool,
     #[clap(subcommand)]
     pub subcmd: Subcmd,
 }
